@@ -1,0 +1,98 @@
+services:
+
+  product-service:
+    build: ./product-service
+    image: product-service:local
+    environment:
+      - SPRING_APPLICATION_NAME=product-service
+      - SERVER_PORT=8080
+    ports:
+      - "8084:8080"
+    networks:
+      - service-network
+
+  cart-service:
+    build: ./cart-service
+    image: cart-service:local
+    environment:
+      - SPRING_APPLICATION_NAME=cart-service
+      - SERVER_PORT=8080
+    ports:
+      - "8081:8080"
+    networks:
+      - service-network
+
+  order-service:
+    build: ./order-service
+    image: order-service:local
+    environment:
+      - SPRING_APPLICATION_NAME=order-service
+      - SERVER_PORT=8080
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    ports:
+      - "8082:8080"
+    networks:
+      - service-network
+
+  interaction-service:
+    build: ./interaction-service
+    image: interaction-service:local
+    environment:
+      - SPRING_APPLICATION_NAME=interaction-service
+      - SERVER_PORT=8080
+    ports:
+      - "8080:8080"
+    networks:
+      - service-network
+
+  invoice-service:
+    build: ./invoice-service
+    image: invoice-service:local
+    environment:
+      - SPRING_APPLICATION_NAME=invoice-service
+      - SERVER_PORT=8080
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    ports:
+      - "8083:8080"
+    networks:
+      - service-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - 2181:2181
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - service-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.1
+    ports:
+      - 9092:9092
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - service-network
+
+  akhq:
+    image: tchiotludo/akhq:latest
+    depends_on:
+      - kafka
+      - zookeeper
+    ports:
+      - "8085:8080"
+    volumes:
+      - ./akhq-config/application.yml:/app/application.yml:ro
+    networks:
+      - service-network
+
+networks:
+  service-network:
+    driver: bridge
