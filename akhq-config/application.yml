@@ -1,0 +1,8 @@
+akhq:
+  connections:
+    my-cluster:
+      properties:
+        bootstrap.servers: "kafka:9092"
+  server:
+    servlet:
+      context-path: /
