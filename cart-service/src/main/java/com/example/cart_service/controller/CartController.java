@@ -14,16 +14,6 @@ import java.util.List;
 public class CartController {
     private final CartService cartService;
 
-    @GetMapping("/configuration/{productId}")
-    public ProductConfigurationDTO getConfiguration(@PathVariable Long productId) {
-        return cartService.getConfiguration(productId);
-    }
-
-    @GetMapping("/products/{id}")
-    public ProductDTO getProductById(@PathVariable Long id) {
-        return cartService.getProductById(id);
-    }
-
     @PostMapping("/{userId}")
     public CartDTO createCart(@PathVariable Long userId){
         return cartService.createCart(userId);

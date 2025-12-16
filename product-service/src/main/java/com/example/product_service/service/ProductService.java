@@ -1,6 +1,7 @@
 package com.example.product_service.service;
 
 import com.example.product_service.exception.NotFoundException;
+import com.example.product_service.exception.WrongValueException;
 import com.example.product_service.mapper.ProductConfigurationMapper;
 import com.example.product_service.mapper.ProductMapper;
 import com.example.product_service.model.*;
@@ -44,6 +45,7 @@ public class ProductService {
     public ProductDTO createProduct(ProductDTO productDTO) {
         ProductValidator.basePriceCannotLessThenZero(productDTO);
         ProductValidator.nameCannotBeEmpty(productDTO);
+        ProductValidator.stockLevelCannotLessThenZero(productDTO);
 
         Product product = productMapper.toEntity(productDTO);
         productRepository.save(product);
@@ -73,5 +75,17 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new NotFoundException("Not found product id: " + productId));
         return productConfigurationMapper.toDTO(product);
+    }
+
+    public void reduceStock(Long productId, int quantity){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NotFoundException("Product not found: " + productId));
+
+        if (product.getStockQuantity() < quantity){
+            throw new WrongValueException("Not enough stock for product: " + product.getName());
+        }
+
+        product.setStockQuantity(product.getStockQuantity() - quantity);
+        productRepository.save(product);
     }
 }

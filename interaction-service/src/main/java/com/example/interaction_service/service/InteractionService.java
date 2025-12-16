@@ -27,8 +27,9 @@ public class InteractionService {
         return productClient.getConfiguration(id);
     }
 
-    public List<ProductDTO> getProductsByType(ProductType type){
-        return productClient.getProductsByType(type);
+    public List<ProductDTO> getProductsByType(String type){
+        ProductType productType = ProductType.from(type);
+        return productClient.getProductsByType(productType.name());
     }
 
     public CartDTO createCart(Long userId){

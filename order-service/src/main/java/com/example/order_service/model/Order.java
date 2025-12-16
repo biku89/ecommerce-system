@@ -31,4 +31,9 @@ public class Order {
     @OneToOne(mappedBy = "order", cascade = CascadeType.ALL,orphanRemoval = true)
     private OrderDetails orderDetails;
 
+    public Order(Long userId, LocalDateTime createdAt, BigDecimal totalPrice){
+        this.userId = userId;
+        this.totalPrice = totalPrice;
+        this.createdAt = createdAt;
+    }
 }

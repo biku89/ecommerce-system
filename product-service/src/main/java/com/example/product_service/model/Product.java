@@ -20,6 +20,7 @@ public class Product {
     private BigDecimal basePrice;
     @Enumerated(EnumType.STRING)
     private ProductType type;
+    private Integer stockQuantity;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Category> availableConfigurations;

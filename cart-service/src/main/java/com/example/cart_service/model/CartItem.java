@@ -25,4 +25,11 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
+
+    public CartItem(AddCartItemDTO addCartItemDTO, Cart cart){
+        this.productId = addCartItemDTO.productId();
+        this.quantity = addCartItemDTO.quantity();
+        this.selectedOptionsIds = addCartItemDTO.optionIds();
+        this.cart = cart;
+    }
 }

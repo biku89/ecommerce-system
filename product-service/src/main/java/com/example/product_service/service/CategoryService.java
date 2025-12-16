@@ -25,9 +25,7 @@ public class CategoryService {
 
         ProductValidator.categoryNameCannotBeNull(categoryName);
 
-        Category category = new Category();
-        category.setName(categoryName);
-        category.setProduct(product);
+        Category category = new Category(categoryName, product);
 
         return productConfigurationMapper.toDTO(categoryRepository.save(category));
     }

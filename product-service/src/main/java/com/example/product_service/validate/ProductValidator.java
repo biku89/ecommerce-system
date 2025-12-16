@@ -13,13 +13,19 @@ import java.math.BigDecimal;
 public final class ProductValidator {
 
     public static void basePriceCannotLessThenZero(ProductDTO productDTO){
-        if (productDTO.basePrice().compareTo(BigDecimal.ZERO) <= 0){
+        if (productDTO.basePrice().compareTo(BigDecimal.ZERO) <= 0 ){
             throw new WrongValueException("Base priace must be greater than zero");
         }
     }
 
+    public static void stockLevelCannotLessThenZero(ProductDTO productDTO){
+        if (productDTO.stockQuantity() <= 0){
+            throw new WrongValueException("Stock quantity must be greater than 0");
+        }
+    }
+
     public static void nameCannotBeEmpty(ProductDTO productDTO){
-        if (productDTO.name() == null){
+        if (productDTO.name() == null || productDTO.name().trim().isEmpty()){
             throw new WrongValueException("Name cannot be empty");
         }
     }

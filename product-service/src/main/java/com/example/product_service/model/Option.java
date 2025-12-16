@@ -22,4 +22,10 @@ public class Option {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+
+    public Option(String name, BigDecimal extraPrice, Category category){
+        this.name = name;
+        this.extraPrice = extraPrice;
+        this.category = category;
+    }
 }

@@ -2,6 +2,7 @@ package com.example.product_service.controller;
 
 import com.example.product_service.model.*;
 import com.example.product_service.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,9 @@ public class ProductController {
     }
 
     @GetMapping("/type/{type}")
-    public List<ProductDTO> getProductsByType(@PathVariable ProductType type){
-        return productService.getProductsByType(type);
+    public List<ProductDTO> getProductsByType(@RequestParam String type){
+        ProductType productType = ProductType.from(type);
+        return productService.getProductsByType(productType);
     }
 
     @GetMapping("/{id}")
@@ -48,5 +50,11 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void deleteProduct(Long id){
         productService.deleteProduct(id);
+    }
+
+    @PostMapping("/{id}/reduce-stock")
+    public void reduceStock(@PathVariable Long id,
+                            @RequestParam int quantity){
+        productService.reduceStock(id, quantity);
     }
 }

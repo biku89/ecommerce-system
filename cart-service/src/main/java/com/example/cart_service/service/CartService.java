@@ -2,10 +2,12 @@ package com.example.cart_service.service;
 
 import com.example.cart_service.client.ProductServiceClient;
 import com.example.cart_service.exception.AlreadyExistsException;
+import com.example.cart_service.exception.InsufficientStockException;
 import com.example.cart_service.exception.NotFoundException;
 import com.example.cart_service.mapper.CartMapper;
 import com.example.cart_service.model.*;
 import com.example.cart_service.repository.CartRepository;
+import com.example.cart_service.validate.CartValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,28 +24,18 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartMapper cartMapper;
 
-    public ProductDTO getProductById(Long id) {
-        return productServiceClient.getProductById(id);
-    }
-
-    public ProductConfigurationDTO getConfiguration(Long productId) {
-        return productServiceClient.getConfiguration(productId);
-    }
-
     public CartDTO createCart(Long userId){
 
         Optional<Cart> existingCart = cartRepository.findByUserId(userId);
         if (existingCart.isPresent()){
             throw new AlreadyExistsException("Cart already exists for user: " + userId);
         }
-        Cart cart = new Cart();
-        cart.setUserId(userId);
-        cart.setItems(new ArrayList<>());
+        Cart cart = new Cart(userId, new ArrayList<>());
 
         cartRepository.save(cart);
         return cartMapper.toDTO(cart);
-
     }
+
     public CartDTO getCart(Long userId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Not found cart for user: " + userId));
@@ -63,11 +55,10 @@ public class CartService {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Not found cart for user: " + userId));
 
-        CartItem item = new CartItem();
-        item.setProductId(addCartItemDTO.productId());
-        item.setQuantity(addCartItemDTO.quantity());
-        item.setSelectedOptionsIds(addCartItemDTO.optionIds());
-        item.setCart(cart);
+        ProductDTO productDTO = productServiceClient.getProductById(addCartItemDTO.productId());
+        CartValidator.stockValidate(productDTO, addCartItemDTO);
+
+        CartItem item = new CartItem(addCartItemDTO, cart);
 
         cart.getItems().add(item);
         cartRepository.save(cart);

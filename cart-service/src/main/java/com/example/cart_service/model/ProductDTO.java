@@ -5,5 +5,6 @@ import java.math.BigDecimal;
 public record ProductDTO(Long id,
                          String name,
                          BigDecimal basePrice,
-                         ProductType type) {
+                         ProductType type,
+                         Integer stockQuantity) {
 }

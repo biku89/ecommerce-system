@@ -25,7 +25,7 @@ public class InteractionController {
     }
 
     @GetMapping("/products/type/{type}")
-    public List<ProductDTO> getProductsByType(@PathVariable ProductType type){
+    public List<ProductDTO> getProductsByType(@RequestParam String type){
         return interactionService.getProductsByType(type);
     }
 

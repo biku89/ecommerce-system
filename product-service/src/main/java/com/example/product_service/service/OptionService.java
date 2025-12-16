@@ -26,10 +26,7 @@ public class OptionService {
 
         ProductValidator.optionNameCannotBeNull(name);
 
-        Option option = new Option();
-        option.setName(name);
-        option.setExtraPrice(extraPrice);
-        option.setCategory(category);
+        Option option = new Option(name,extraPrice,category);
 
         return productConfigurationMapper.toDTO(optionRepository.save(option));
     }
